@@ -1,4 +1,4 @@
-# Sync Music Player 🎵
+# VoidGate 🚪🔒
 
 ### Selecione seu Idioma
 [![Português](https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/45px-Flag_of_Brazil.svg.png)](#-português)  
@@ -7,24 +7,24 @@
 ## 🇧🇷 Português
 
 ### 🚀 Visão Geral
-O Sync Music Player é uma aplicação web que permite que múltiplos usuários criem e compartilhem playlists do YouTube sincronizadas em tempo real. Desenvolvido com Python (Flask) e JavaScript, oferece uma experiência fluida para escuta colaborativa de músicas.
+O VoidGate é um sistema de gerenciamento de acesso e conteúdo baseado na web, desenvolvido com Python (Flask) e tecnologias modernas. Oferece um painel de controle robusto para gerenciamento de usuários, autenticação segura e armazenamento em nuvem com Supabase.
 
 ### ✨ Recursos
-- Sincronização de playlist em tempo real
-- Salas para múltiplos usuários
-- Controles intuitivos de reprodução
-- Design responsivo
-- Integração com vídeos do YouTube
-- Autenticação de usuários
-- Banco de dados PostgreSQL
+- Autenticação de usuários segura
+- Painel administrativo
 - Armazenamento em nuvem com Supabase
+- Banco de dados PostgreSQL
+- Interface responsiva
+- Gerenciamento de sessões
+- Limpeza automática de conteúdo expirado
+- API RESTful
 
 ### 🛠️ Instalação
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/inotyu/sync_msc.git
-   cd sync_msc
+   git clone https://github.com/inotyu/voidgate.git
+   cd voidgate
    ```
 
 2. **Crie e ative um ambiente virtual (recomendado):**
@@ -67,32 +67,32 @@ O Sync Music Player é uma aplicação web que permite que múltiplos usuários 
 
 ### 🎮 Como Usar
 1. Acesse a aplicação no navegador
-2. Crie uma conta ou faça login
-3. Crie uma nova sala ou entre em uma existente
-4. Adicione vídeos do YouTube à playlist
-5. Controle a reprodução para todos os usuários da sala
+2. Faça login com suas credenciais
+3. Acesse o painel administrativo
+4. Gerencie usuários e permissões
+5. Acompanhe as atividades do sistema
 
 ## 🇬🇧 English
 
 ### 🚀 Overview
-Sync Music Player is a web application that allows multiple users to create and share synchronized YouTube playlists in real-time. Built with Python (Flask) and JavaScript, it provides a seamless experience for collaborative music listening.
+VoidGate is a web-based access and content management system, built with Python (Flask) and modern technologies. It provides a robust control panel for user management, secure authentication, and cloud storage with Supabase.
 
 ### ✨ Features
-- Real-time playlist synchronization
-- Multiple user rooms for collaborative listening
-- Intuitive playback controls
-- Responsive design
-- YouTube video integration
-- User authentication
-- PostgreSQL database
+- Secure user authentication
+- Admin dashboard
 - Cloud storage with Supabase
+- PostgreSQL database
+- Responsive interface
+- Session management
+- Automatic cleanup of expired content
+- RESTful API
 
 ### 🛠️ Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/inotyu/sync_msc.git
-   cd sync_msc
+   git clone https://github.com/inotyu/voidgate.git
+   cd voidgate
    ```
 
 2. **Set up a virtual environment (recommended):**
@@ -135,10 +135,10 @@ Sync Music Player is a web application that allows multiple users to create and 
 
 ### 🎮 Usage
 1. Open the application in your web browser
-2. Create an account or log in
-3. Create a new room or join an existing one
-4. Add YouTube video URLs to the playlist
-5. Control playback for all users in the room
+2. Log in with your credentials
+3. Access the admin dashboard
+4. Manage users and permissions
+5. Monitor system activities
 
 ### 📝 Licença / License
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
