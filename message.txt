@@ -1,0 +1,210 @@
+Painel do Usuário — Requisitos Completos
+
+ Estrutura geral
+
+Um único HTML, dividido em menu lateral (com ícones SVG) + área dinâmica (que troca de conteúdo via JavaScript).
+
+Mesmo header e footer da página inicial, mantendo mesma identidade visual e estética (mesmas fontes, sombras, espaçamentos e animações).
+
+Responsivo: menu recolhe em dispositivos móveis.
+
+
+ Menu lateral (fixo)
+
+Cada item com ícone SVG + nome da seção.
+Itens:
+
+Meus Vídeos
+
+
+Upload
+
+
+Estatísticas
+
+
+Configurações
+
+
+Sair
+
+
+
+Detalhes:
+
+“Sair” fica fixo no final do menu lateral.
+
+Ícones SVG devem ser vetoriais limpos e consistentes.
+
+Item ativo fica destacado.
+
+Ao clicar, troca o conteúdo principal sem recarregar a página.
+
+
+
+---
+
+ 
+Meus Vídeos
+
+Conteúdo:
+
+Grade responsiva de vídeos do usuário.
+
+Cada card de vídeo mostra:
+
+Miniatura (ou ícone de vídeo se thumbnail não existir)
+
+Nome do arquivo
+
+Data do upload
+
+Data de expiração (“Expira em 6 dias”)
+
+
+
+Ao passar o mouse (ou tocar no celular):
+
+Mostra 3 botões sobre o card:
+
+ Copiar link → copia URL .mp4
+
+ Abrir vídeo → abre nova aba
+
+ Excluir → confirma antes de deletar
+
+
+
+Extras:
+
+Campo de busca no topo (“Buscar vídeo por nome”)
+
+Paginação automática se tiver muitos vídeos
+
+
+
+---
+
+ 
+Upload
+
+Conteúdo:
+
+Caixa de arrastar e soltar (drag & drop) ou botão de upload.
+
+Campos:
+
+Input de vídeo (.mp4)
+
+Campo “Nome do arquivo” (opcional)
+
+
+Mostra tamanho máximo permitido (ex.: “Máx. 100 MB”)
+
+Barra de progresso animada durante upload
+
+Após o envio:
+
+Exibe link gerado (com botão de copiar)
+
+Mensagem “Expira em 7 dias automaticamente”
+
+
+
+
+
+
+ 
+Estatísticas
+
+Conteúdo:
+
+Painel com cards:
+
+Uso de armazenamento:
+
+Exemplo: “Usado 630 MB de 10 GB (6%)”
+
+Barra de progresso horizontal
+
+
+Total de vídeos enviados
+
+Total de visualizações
+
+ Espaço livre restante
+
+
+(Opcional) Pequeno gráfico ou lista:
+
+“Vídeo mais visto”
+
+“Último vídeo enviado”
+
+
+
+
+ 
+Configurações
+
+Conteúdo:
+
+Campos:
+
+ Email (fixo, não editável)
+
+ Usuário / Apelido (editável)
+
+ Plano atual (“Free” / “Premium”)
+
+ Conta criada em: (data)
+
+
+Botões:
+
+ Alterar nome de usuário
+
+ Alterar senha (abre modal)
+
+Salvar alterações
+
+
+
+Modal de senha:
+
+Campo “Senha atual”
+
+Campo “Nova senha”
+
+Campo “Confirmar nova senha”
+
+Botão “Salvar nova senha”
+
+Mostra alertas se senhas não coincidirem
+
+ 
+Sair
+
+Botão que desconecta o usuário (logout Flask session).
+
+Confirma antes de sair (“Tem certeza que deseja sair?”).
+
+Design e comportamento geral
+
+Mesma tipografia, espaçamentos e paleta da home.
+
+Animações suaves em transições (Fade ou Slide).
+
+Responsividade total: o painel se ajusta a telas pequenas.
+
+Feedback visual (toasts ou alerts discretos) para ações como upload concluído, link copiado, etc.
+
+ Resumo final (estrutura lógica)
+
+Seção    Elementos principais    Ações do usuário
+
+Meus Vídeos    Cards com miniaturas + botões    Copiar / Abrir / Excluir
+Upload    Input + drag & drop + progresso    Enviar vídeo
+Estatísticas    Cards + gráfico + barras    Visualizar desempenho
+Configurações    Inputs + modal senha    Alterar nome/senha
+Sair    Botão de logout    Finalizar sessão.

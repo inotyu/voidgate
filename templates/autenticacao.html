@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoidGate - {{ 'Registro' if form_type == 'register' else 'Login' }}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/lucide@latest/font/lucide.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #130018, #05000b 80%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px;
+        }
+
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            margin-bottom: 300px;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Header Fixo */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 26, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+        }
+
+        .header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #ff00ff, #6b21a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-link {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #b794ff;
+        }
+
+        /* Estilos do formulário */
+        .wrapper {
+            width: 100%;
+            max-width: 880px;
+            min-height: 500px;
+            display: flex;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(20, 0, 40, 0.9), rgba(6, 0, 16, 0.85));
+            border: 1px solid rgba(255, 0, 255, 0.12);
+            box-shadow: 0 0 40px rgba(170, 0, 255, 0.18);
+            backdrop-filter: blur(10px);
+        }
+
+        .left {
+            flex: 1;
+            background: linear-gradient(160deg, #1a0025, #0a0013);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .left h1 {
+            margin-top: 20px;
+            color: #f0b7ff;
+            font-size: 1.9rem;
+            text-shadow: 0 0 18px rgba(255, 0, 255, 0.6);
+        }
+
+        .left p {
+            margin-top: 10px;
+            color: #b794ff;
+        }
+
+        .right {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+        }
+
+        .form-box {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .form-box.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #f36bff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d8a4ff;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(200, 120, 255, 0.25);
+            background: rgba(30, 0, 50, 0.45);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #b44cff;
+            box-shadow: 0 0 10px rgba(180, 76, 255, 0.18);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #b44cff, #ff00ff);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(180, 76, 255, 0.3);
+        }
+
+        .switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #b794ff;
+        }
+
+        .switch a {
+            color: #d8a4ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .switch a:hover {
+            color: #ff6bff;
+            text-decoration: underline;
+        }
+
+        /* Novos estilos para login social */
+        .social-login {
+            margin-top: 25px;
+        }
+
+        .social-login>p {
+            text-align: center;
+            color: #b794ff;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .social-btn {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .social-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .social-btn:hover::before {
+            opacity: 1;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-btn:active {
+            transform: translateY(0);
+        }
+
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .social-btn .tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .social-btn .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .social-btn:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+        }
++        /* Container fixo para mensagens flash */
++        .flash-container {
++            position: fixed;
++            top: 20px;
++            left: 50%;
++            transform: translateX(-50%);
++            z-index: 9999;
++            display: flex;
++            flex-direction: column;
++            gap: 10px;
++            width: 90%;
++            max-width: 400px;
++        }
+
+        .success {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+        .error {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0a0a12;
+            color: #94a3b8;
+            padding: 60px 0 0;
+        }
+
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 50px;
+            padding-bottom: 60px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .footer-logo .logo {
+            width: 30px;
+            height: 30px;
+        }
+
+        .footer-logo .logo-text {
+            font-size: 1.2rem;
+        }
+
+        .footer-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .footer-social a {
+            color: #94a3b8;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: #b794ff;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .footer-column h4 {
+            color: #f8fafc;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: #b794ff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .left {
+                display: none;
+            }
+
+            .right {
+                padding: 30px 20px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .social-buttons {
+                flex-direction: column;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding-bottom: 40px;
+            }
+
+            .footer-links {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo-container">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" class="logo-svg">
+                        <defs>
+                            <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff00ff" />
+                                <stop offset="100%" stop-color="#6b21a8" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradient)" stroke-width="2" />
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradient)" stroke-width="1.5"
+                            opacity="0.6" />
+                        <circle cx="50" cy="50" r="25" fill="url(#voidGradient)" />
+                        <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle"
+                            font-family="Orbitron">V</text>
+                    </svg>
+                </div>
+                <span class="logo-text">VoidGate</span>
+            </a>
+
+            <nav class="nav">
+                <a href="/index.html" class="nav-link">Início</a>
+                <a href="/index.html#sobre" class="nav-link">Sobre</a>
+                <a href="/index.html#porque-usar" class="nav-link">Por que usar</a>
+                <a href="/index.html#seguranca" class="nav-link">Segurança</a>
+                <a href="/index.html#precos" class="nav-link">Preços</a>
+                <a href="/index.html#faq" class="nav-link">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="msg {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="auth-container">
+        <div class="wrapper" id="loginForm">
+            <div class="left">
+                <div class="logo" style="width: 120px; height: 120px; margin-bottom: 20px;">
+                    <svg viewBox="0 0 100 100" class="logo-svg" style="width: 100%; height: 100%;">
+                        <defs>
+                            <linearGradient id="voidGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff00ff" />
+                                <stop offset="100%" stop-color="#6b21a8" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradient2)" stroke-width="2" />
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradient2)" stroke-width="1.5"
+                            opacity="0.6" />
+                        <circle cx="50" cy="50" r="25" fill="url(#voidGradient2)" />
+                        <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle"
+                            font-family="Orbitron">V</text>
+                    </svg>
+                </div>
+                <h1>Bem-vindo ao VoidGate</h1>
+                <p>Entre com sua conta e acesse um novo mundo de possibilidades.</p>
+            </div>
+
+            <div class="right">
+                <!-- Formulário de Login -->
+                <div id="login-form" class="form-box active">
+                    <h2>Login</h2>
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        <div class="form-group">
+                            <label for="login-user">Usuário ou Email</label>
+                            <input id="login-user" name="email" type="text" autocomplete="username"
+                                placeholder="Digite seu usuário ou email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-pass">Senha</label>
+                            <input id="login-pass" name="password" type="password" autocomplete="current-password"
+                                placeholder="Digite sua senha" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                        <div class="switch">
+                            <a href="#" onclick="showForm('forgot'); return false;">Esqueceu a senha?</a> |
+                            <a href="#" onclick="showForm('register'); return false;">Criar Conta</a>
+                        </div>
+                        <div class="social-login">
+                            <p>Ou entre com:</p>
+                            <div class="social-buttons">
+                                <button type="button" class="social-btn" onclick="openPopup('google')"
+                                    style="background: #DB4437;">
+                                    <span class="tooltip">Google</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                        <path
+                                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                        <path
+                                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                        <path
+                                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                    </svg>
+                                    <span>Google</span>
+                                </button>
+                                <button type="button" class="social-btn" onclick="openPopup('discord')"
+                                    style="background: #5865F2;">
+                                    <span class="tooltip">Discord</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+                                    </svg>
+                                    <span>Discord</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="msg" id="login-msg"></div>
+                    </form>
+                </div>
+
+                <!-- Formulário de Cadastro -->
+                <div id="register-form" class="form-box">
+                    <h2>Criar Conta</h2>
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        <div class="form-group">
+                            <label for="reg-user">Usuário</label>
+                            <input id="reg-user" name="username" type="text" autocomplete="username"
+                                placeholder="Escolha um nome de usuário" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email</label>
+                            <input id="reg-email" name="email" type="email" autocomplete="email" placeholder="Seu melhor email"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-pass">Senha</label>
+                            <input id="reg-pass" name="password" type="password" autocomplete="new-password"
+                                placeholder="Crie uma senha forte" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-confirm">Confirmar Senha</label>
+                            <input id="reg-confirm" name="confirm_password" type="password" placeholder="Digite a senha novamente" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        <div class="switch">
+                            Já tem uma conta? <a href="#" onclick="showForm('login'); return false;">Faça login</a>
+                        </div>
+                        <div class="msg" id="reg-msg"></div>
+                    </form>
+                </div>
+
+                <!-- Formulário de Recuperação de Senha -->
+                <div id="forgot-form" class="form-box">
+                    <h2>Redefinir Senha</h2>
+                    <form method="POST" action="{{ url_for('auth.reset_password') }}">
+                        <div class="form-group">
+                            <label for="fusername">Nome de usuário</label>
+                            <input id="fusername" name="username" type="text" placeholder="Digite seu nome de usuário" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fmail">Email cadastrado</label>
+                            <input id="fmail" name="email" type="email" autocomplete="email" placeholder="Digite seu email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fnewpass">Nova senha</label>
+                            <input id="fnewpass" name="new_password" type="password" placeholder="Digite a nova senha" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Redefinir Senha</button>
+                        <div class="switch">
+                            <a href="#" onclick="showForm('login'); return false;">Voltar ao Login</a>
+                        </div>
+                        <div class="msg" id="forgot-msg"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo">
+                            <svg viewBox="0 0 100 100" class="logo-svg">
+                                <defs>
+                                    <linearGradient id="voidGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#ff00ff" />
+                                        <stop offset="100%" stop-color="#6b21a8" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradient3)"
+                                    stroke-width="2" />
+                                <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradient3)"
+                                    stroke-width="1.5" opacity="0.6" />
+                                <circle cx="50" cy="50" r="25" fill="url(#voidGradient3)" />
+                                <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle"
+                                    font-family="Orbitron">V</text>
+                            </svg>
+                        </div>
+                        <span class="logo-text">VoidGate</span>
+                    </div>
+                    <p class="footer-desc">Transformando a forma como você compartilha vídeos na web.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="GitHub">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 3.6 5.4 6.5 9 7.5-1-4.2 3-7.5 7-5 1-.5 2-1 3-1.5-.5 1.5-1.5 2.5-3 3 1 0 2-.5 3-1-.5 1-1.5 2-2.5 2.5z">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Discord">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path
+                                    d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Links Rápidos</h4>
+                        <ul>
+                            <li><a href="index.html">Início</a></li>
+                            <li><a href="index.html#sobre">Sobre Nós</a></li>
+                            <li><a href="index.html#precos">Planos</a></li>
+                            <li><a href="index.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Recursos</h4>
+                        <ul>
+                            <li><a href="#">API</a></li>
+                            <li><a href="#">Documentação</a></li>
+                            <li><a href="#">Status do Serviço</a></li>
+                            <li><a href="#">Central de Ajuda</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Termos de Uso</a></li>
+                            <li><a href="#">Política de Privacidade</a></li>
+                            <li><a href="#">Política de Cookies</a></li>
+                            <li><a href="#">DMCA</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 VoidGate. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Inicializa os ícones
+        lucide.createIcons();
+
+        // Controle de exibição dos formulários
+        function showForm(name) {
+            // Esconde todos os formulários
+            document.querySelectorAll('.form-box').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+
+            // Mostra o formulário solicitado
+            const form = document.getElementById(name + '-form');
+            if (form) {
+                form.classList.add('active');
+                form.style.display = 'block';
+
+                // Rola para o topo do formulário
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Limpa mensagens de erro
+            document.querySelectorAll('.msg').forEach(el => {
+                el.textContent = '';
+                el.className = 'msg';
+            });
+        }
+
+        // Helpers para armazenamento em memória (simulação)
+        let usersData = [];
+
+        function getUsers() {
+            return usersData;
+        }
+
+        function saveUsers(users) {
+            usersData = users;
+        }
+
+        // Função para abrir popup de login social (simulado)
+        function openPopup(provider) {
+            const msg = document.getElementById('login-msg');
+            msg.textContent = `Redirecionando para login com ${provider}...`;
+            msg.className = 'msg';
+
+            // Simula o redirecionamento
+            setTimeout(() => {
+                msg.textContent = `Login com ${provider} não configurado. Use o formulário de cadastro.`;
+                msg.className = 'msg error';
+            }, 1500);
+        }
+
+        // Verifica se há parâmetros na URL para mostrar um formulário específico
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const form = urlParams.get('form');
+
+            if (form === 'register') {
+                showForm('register');
+            } else if (form === 'forgot') {
+                showForm('forgot');
+            }
+        });
+    </script>
+</body>
+
+</html>

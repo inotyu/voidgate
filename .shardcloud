@@ -1,0 +1,8 @@
+DISPLAY_NAME=voidgate
+DESCRIPTION=voidgate
+MEMORY=512
+VERSION=recommended
+LANGUAGE=python
+CUSTOM_COMMAND=PORT=80 sh start.sh
+SUBDOMAIN=voidgate
+APPID=76139ea5-71c9-404a-ab69-0fe42927d5ae

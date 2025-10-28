@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoidGate - Envie e compartilhe vídeos</title>
+    <!-- Favicons -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/voidgate.css') }}">
+    <meta name="theme-color" content="#000000">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/lucide@latest/font/lucide.css" rel="stylesheet">
+    <style>
+        /* Animações */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-title, .hero-subtitle, .hero-buttons {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .header-logo, .header-nav, .header-buttons {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .header-logo { animation-delay: 0.1s; }
+        .header-nav { animation-delay: 0.3s; }
+        .header-buttons { animation-delay: 0.5s; }
+
+        .faq-answer {
+            display: none;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+            opacity: 1;
+        }
+
+        .faq-question {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-arrow {
+            transform: rotate(180deg);
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+            opacity: 1;
+        }
+
+        .faq-question {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .mobile-menu .nav-link {
+            font-size: 1.2rem;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .mobile-menu .header-buttons {
+            margin-top: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-menu .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav, .header-buttons {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="container">
+            <div class="logo-container header-logo">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" class="logo-svg">
+                        <defs>
+                            <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff00ff" />
+                                <stop offset="100%" stop-color="#6b21a8" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradient)" stroke-width="2" />
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradient)" stroke-width="1.5" opacity="0.6" />
+                        <circle cx="50" cy="50" r="25" fill="url(#voidGradient)" />
+                        <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Orbitron">V</text>
+                    </svg>
+                </div>
+                <span class="logo-text">VoidGate</span>
+            </div>
+            
+            <nav class="nav header-nav">
+                <a href="#inicio" class="nav-link">Início</a>
+                <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#porque-usar" class="nav-link">Por que usar</a>
+                <a href="#seguranca" class="nav-link">Segurança</a>
+                <a href="#precos" class="nav-link">Preços</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </nav>
+            
+            <div class="header-buttons">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Criar Conta</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" id="closeMobileMenu">&times;</button>
+        <nav class="nav">
+            <a href="#inicio" class="nav-link">Início</a>
+            <a href="#sobre" class="nav-link">Sobre</a>
+            <a href="#porque-usar" class="nav-link">Por que usar</a>
+            <a href="#seguranca" class="nav-link">Segurança</a>
+            <a href="#precos" class="nav-link">Preços</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+        </nav>
+        <div class="header-buttons">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Criar Conta</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <h1 class="hero-title">
+                Envie, converta e <span class="gradient-text">compartilhe</span> — tudo com um link <span class="text-purple">.mp4</span>
+            </h1>
+            <p class="hero-subtitle">
+                O VoidGate transforma seus arquivos em vídeos perfeitos para Discord, com conversão automática e links diretos. A plataforma mais rápida e segura para compartilhar conteúdo.
+            </p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Começar agora</a>
+                <a href="#precos" class="btn btn-outline btn-lg">Ver planos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Estatísticas -->
+    <section class="stats fade-in">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i data-lucide="upload" class="stat-icon"></i>
+                    <h3>+25.000</h3>
+                    <p>vídeos enviados</p>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="users" class="stat-icon"></i>
+                    <h3>+10.000</h3>
+                    <p>usuários</p>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="eye" class="stat-icon"></i>
+                    <h3>+3.000.000</h3>
+                    <p>visualizações</p>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="cloud" class="stat-icon"></i>
+                    <h3>99.9%</h3>
+                    <p>uptime</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Sobre -->
+    <section id="sobre" class="section fade-in">
+        <div class="container">
+            <h2 class="section-title">O que é o <span class="gradient-text">VoidGate</span>?</h2>
+            <div class="sobre-content">
+                <div class="sobre-text">
+                    <p>O VoidGate é um sistema moderno de upload que transforma seus arquivos em vídeos com link .mp4 — perfeito para compartilhar no Discord e redes sociais.</p>
+                    <p>Armazenamento rápido, conversão automática e uma interface feita para criadores. Sem complicações, sem limitações.</p>
+                    <button class="btn btn-outline">Saiba mais →</button>
+                </div>
+                <div class="sobre-steps">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h4>Upload</h4>
+                            <p>Envie seu arquivo</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h4>Conversão</h4>
+                            <p>Transformação automática</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h4>Link .mp4</h4>
+                            <p>Pronto para compartilhar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Por que usar -->
+    <section id="porque-usar" class="section why fade-in">
+        <div class="container">
+            <h2 class="section-title">Por que <span class="gradient-text">usar</span> o VoidGate?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i data-lucide="zap" class="feature-icon"></i>
+                    <h4>Rápido</h4>
+                    <p>Upload e conversão mais rápidos que os concorrentes.</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="link-2" class="feature-icon"></i>
+                    <h4>Links diretos</h4>
+                    <p>Compartilhe com um único link .mp4, sem redirecionamentos.</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="infinity" class="feature-icon"></i>
+                    <h4>Armazenamento</h4>
+                    <p>Armazenamento temporário (usuários premium têm armazenamento permanente).</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="cpu" class="feature-icon"></i>
+                    <h4>Conversão inteligente</h4>
+                    <p>Automação que adapta o vídeo para a melhor qualidade + tamanho.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Segurança -->
+    <section id="seguranca" class="section security fade-in">
+        <div class="container">
+            <h2 class="section-title">Sua <span class="gradient-text">segurança</span> em primeiro lugar</h2>
+            <div class="security-grid">
+                <div class="security-card">
+                    <i data-lucide="shield" class="security-icon"></i>
+                    <h4>Criptografia</h4>
+                    <p>Todos os uploads são protegidos por TLS 1.3 e armazenados com criptografia de 256-bits.</p>
+                </div>
+                <div class="security-card">
+                    <i data-lucide="lock" class="security-icon"></i>
+                    <h4>Privacidade</h4>
+                    <p>Seus vídeos são privados por padrão. Você decide quem pode assistir.</p>
+                </div>
+                <div class="security-card">
+                    <i data-lucide="alert-circle" class="security-icon"></i>
+                    <h4>Monitoração 24/7</h4>
+                    <p>Infraestrutura monitorada em tempo real para prevenir qualquer ameaça.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Preços -->
+    <section id="precos" class="section pricing fade-in">
+        <div class="container">
+            <h2 class="section-title">Planos &amp; <span class="gradient-text">Preços</span></h2>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Gratuito</h3>
+                    <p class="price">R$0<span>/mês</span></p>
+                    <ul>
+                        <li>5 GB de armazenamento</li>
+                        <li>Uploads até 500 MB</li>
+                        <li>Conversão básica</li>
+                    </ul>
+                    <button class="btn btn-outline">Começar</button>
+                </div>
+                <div class="price-card popular">
+                    <span class="badge">Popular</span>
+                    <h3>Creator</h3>
+                    <p class="price">R$19<span>/mês</span></p>
+                    <ul>
+                        <li>200 GB de armazenamento</li>
+                        <li>Uploads até 4 GB</li>
+                        <li>Conversão avançada</li>
+                        <li>Suporte prioritário</li>
+                    </ul>
+                    <button class="btn btn-primary">Assinar</button>
+                </div>
+                <div class="price-card">
+                    <h3>Enterprise</h3>
+                    <p class="price">Custom</p>
+                    <ul>
+                        <li>Armazenamento ilimitado</li>
+                        <li>CDN global</li>
+                        <li>SLA 99.99%</li>
+                        <li>Gerente dedicado</li>
+                    </ul>
+                    <button class="btn btn-outline">Fale conosco</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção FAQ -->
+    <section id="faq" class="section faq fade-in">
+        <div class="container">
+            <h2 class="section-title">Perguntas <span class="gradient-text">Frequentes</span></h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <h4 class="faq-question">
+                        Qual o tamanho máximo de upload no plano gratuito?
+                        <i data-lucide="chevron-down" class="faq-arrow"></i>
+                    </h4>
+                    <p class="faq-answer">Você pode enviar arquivos de até 500 MB no plano gratuito. Para limites maiores, confira nossos planos pagos.</p>
+                </div>
+                <div class="faq-item">
+                    <h4 class="faq-question">
+                        Meus vídeos são realmente permanentes?
+                        <i data-lucide="chevron-down" class="faq-arrow"></i>
+                    </h4>
+                    <p class="faq-answer">Não! Vídeos do plano gratuito têm duração limitada. Usuários premium têm armazenamento permanente enquanto a conta estiver ativa e respeitando nossos termos de uso.</p>
+                </div>
+                <div class="faq-item">
+                    <h4 class="faq-question">
+                        Posso mudar de plano a qualquer momento?
+                        <i data-lucide="chevron-down" class="faq-arrow"></i>
+                    </h4>
+                    <p class="faq-answer">Claro! Você pode fazer upgrade ou downgrade instantaneamente pelo painel de controle.</p>
+                </div>
+                <div class="faq-item">
+                    <h4 class="faq-question">
+                        Existe limite de visualizações?
+                        <i data-lucide="chevron-down" class="faq-arrow"></i>
+                    </h4>
+                    <p class="faq-answer">Nenhum. Todos os planos contam com visualizações ilimitadas através da nossa CDN.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <!-- Branding -->
+            <div class="footer-brand">
+                <div class="logo-container">
+                    <div class="logo small">
+                        <svg viewBox="0 0 100 100" class="logo-svg">
+                            <defs>
+                                <linearGradient id="voidGradientFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff00ff" />
+                                    <stop offset="100%" stop-color="#6b21a8" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradientFooter)" stroke-width="2" />
+                            <circle cx="50" cy="50" r="25" fill="url(#voidGradientFooter)" />
+                            <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Orbitron">V</text>
+                        </svg>
+                    </div>
+                    <span class="logo-text">VoidGate</span>
+                </div>
+                <span class="status-badge"><span class="status-dot"></span> Online</span>
+                <p class="footer-desc">Envie, converta e compartilhe vídeos prontos para o Discord com o VoidGate.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Discord"><i data-lucide="discord" class="social-icon"></i></a>
+                    <a href="#" aria-label="TikTok"><i data-lucide="music" class="social-icon"></i></a>
+                    <a href="#" aria-label="X"><i data-lucide="twitter" class="social-icon"></i></a>
+                    <a href="#" aria-label="Telegram"><i data-lucide="send" class="social-icon"></i></a>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Geral</h4>
+                    <ul>
+                        <li><a href="#">Login</a></li>
+                        <li><a href="#">Criar conta</a></li>
+                        <li><a href="#precos">Preços</a></li>
+                        <li><a href="#">Status do site</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Recursos</h4>
+                    <ul>
+                        <li><a href="#">Central de ajuda</a></li>
+                        <li><a href="#">Changelog</a></li>
+                        <li><a href="#">Redeem Code</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li><a href="#">Servidor Discord</a></li>
+                        <li><a href="#">Suporte</a></li>
+                        <li><a href="#">Comercial</a></li>
+                        <li><a href="#">Email legal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Termos de serviço</a></li>
+                        <li><a href="#">Política de direitos autorais</a></li>
+                        <li><a href="#">Política de privacidade</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>Copyright © 2024 VoidGate - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Animações de fade-in no scroll e toggle FAQ
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observar elementos com fade-in
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Toggle FAQ items
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const faqItem = question.parentElement;
+                    faqItem.classList.toggle('open');
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.add('active');
+            });
+
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+
+            // Close menu on nav link click
+            document.querySelectorAll('.mobile-menu .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

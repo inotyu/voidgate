@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoidGate - Painel</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6b21a8;
+            --primary-light: #8b5cf6;
+            --secondary: #ff00ff;
+            --dark: #0f0f1a;
+            --darker: #0a0a12;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, #130018, #05000b 80%);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 26, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #ff00ff, #6b21a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gray);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(15, 15, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+        }
+
+        .menu-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary-light);
+            border-left-color: var(--primary-light);
+        }
+
+        .menu-item svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .menu-separator {
+            flex: 1;
+        }
+
+        .menu-logout {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 40px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(180deg, #fff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .search-bar {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 0.95rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-light);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, rgba(107, 33, 168, 0.3), rgba(255, 0, 255, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-thumbnail svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.6;
+        }
+
+        .video-actions {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-card:hover .video-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .video-info {
+            padding: 16px;
+        }
+
+        .video-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .expire-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(255, 165, 0, 0.15);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 4px;
+            color: #ffa500;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .upload-container {
+            max-width: 600px;
+        }
+
+        .upload-box {
+            border: 2px dashed rgba(139, 92, 246, 0.4);
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary-light);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .upload-box.dragover {
+            border-color: var(--secondary);
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            opacity: 0.6;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--light);
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .form-group {
+            margin-top: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 0.95rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--light);
+            border: 1px solid var(--primary-light);
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .upload-result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .result-link input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: var(--light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(139, 92, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--primary-light);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .storage-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 6%;
+            border-radius: 4px;
+        }
+
+        .settings-container {
+            max-width: 600px;
+        }
+
+        .settings-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .settings-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--primary-light);
+            border-radius: 20px;
+            color: var(--primary-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--light);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 15, 26, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .toast.success {
+            border-color: rgba(74, 222, 128, 0.5);
+        }
+
+        .toast.error {
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .footer {
+            background: rgba(10, 10, 18, 0.95);
+            color: var(--gray);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 80px;
+            margin-left: 260px;
+        }
+
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .footer-social a {
+            color: var(--gray);
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-social svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer-column h4 {
+            color: var(--light);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: var(--gray);
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .footer {
+                margin-left: 0;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo-container">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" class="logo-svg">
+                        <defs>
+                            <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff00ff" />
+                                <stop offset="100%" stop-color="#6b21a8" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradient)" stroke-width="2" />
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradient)" stroke-width="1.5" opacity="0.6" />
+                        <circle cx="50" cy="50" r="25" fill="url(#voidGradient)" />
+                        <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Orbitron">V</text>
+                    </svg>
+                </div>
+                <span class="logo-text">VoidGate</span>
+            </a>
+
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="user-info">
+                    <span>Bem-vindo, <strong>{{ username }}</strong></span>
+                    <div class="user-avatar">
+                        {% if avatar_url %}
+                            <img src="{{ avatar_url }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">
+                        {% else %}
+                            {{ username[:2]|upper }}
+                        {% endif %}
+                    </div>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-menu">
+                <div class="menu-item active" data-section="videos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                    </svg>
+                    <span>Meus Vídeos</span>
+                </div>
+
+                <div class="menu-item" data-section="upload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Upload</span>
+                </div>
+
+                <div class="menu-item" data-section="stats">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Estatísticas</span>
+                </div>
+
+                <div class="menu-item" data-section="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m-8-7h6m6 0h6"></path>
+                    </svg>
+                    <span>Configurações</span>
+                </div>
+
+                <div class="menu-separator"></div>
+
+                <div class="menu-item menu-logout" onclick="logout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Sair</span>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <section id="videos" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">Meus Vídeos</h1>
+                    <p class="section-subtitle">Gerencie todos os seus vídeos enviados</p>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="🔍 Buscar vídeo por nome..." onkeyup="searchVideos(this.value)">
+                </div>
+
+                <div class="videos-grid" id="videosGrid">
+                    {% for video in videos %}
+                    <div class="video-card" data-name="{{ video.name }}" data-expiration="{{ video.expiration_date.isoformat() if video.expiration_date else '' }}">
+                        <div class="video-thumbnail">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <div class="video-actions">
+                                <button class="action-btn" 
+                                    data-video-name="{{ video.name|lower|replace(' ', '-') }}" 
+                                    data-username="{{ session.username }}"
+                                    onclick="copyLink(this)" 
+                                    title="Copiar link">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                                <button class="action-btn" 
+                                    data-video-name="{{ video.name|lower|replace(' ', '-') }}" 
+                                    data-username="{{ session.username }}"
+                                    onclick="openVideo(this)" 
+                                    title="Abrir vídeo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </button>
+                                <button class="action-btn" onclick="deleteVideo('{{ video.id }}')" title="Excluir">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-name">{{ video.name }}</div>
+                            <div class="video-meta">
+                                <span>Enviado em {{ video.upload_date.strftime('%d/%m/%Y') if video.upload_date else 'Data desconhecida' }}</span>
+                            </div>
+                            {% if video.expiration_date %}
+                            <div class="expire-badge">
+                                ⏰ {% if video.remaining_minutes > 0 %}Expira em {{ video.remaining_minutes }} minutos{% else %}Expirado{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section id="upload" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Upload de Vídeo</h1>
+                    <p class="section-subtitle">Envie seus vídeos e compartilhe com o mundo</p>
+                </div>
+
+                <div class="upload-container">
+                    <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div class="upload-text">Clique ou arraste o vídeo aqui</div>
+                        <div class="upload-hint">Formatos suportados: MP4, AVI, MOV • Máx. 100 MB (Plano Free)</div>
+                    </div>
+                    <input type="file" id="fileInput" name="video" class="upload-input" accept="video/*" onchange="handleFileSelect(event)">
+
+                    <div class="form-group">
+                        <label class="form-label">Nome do arquivo (opcional)</label>
+                        <input type="text" class="form-input" id="videoName" name="videoName" placeholder="Ex: meu-video-incrivel">
+                    </div>
+
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <button class="btn btn-primary" onclick="uploadVideo()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Enviar vídeo
+                        </button>
+                    </div>
+
+                    <div class="upload-result" id="uploadResult">
+                        <div style="font-weight: 600; margin-bottom: 8px;">✅ Upload concluído com sucesso!</div>
+                        <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 12px;">Seu vídeo expira automaticamente em 7 dias</div>
+                        <div class="result-link">
+                            <input type="text" id="resultLink" readonly value="https://voidgate.com/v/example123.mp4">
+                            <button class="btn btn-outline" onclick="copyResultLink()">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="stats" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Estatísticas</h1>
+                    <p class="section-subtitle">Acompanhe o desempenho da sua conta</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ "%.2f"|format(total_size_mb) }} MB</div>
+                        <div class="stat-label">Usado de 10 GB ({{ "%.1f"|format(used_percentage) }}%)</div>
+                        <div class="storage-bar">
+                            <div class="storage-fill" style="width: {{ used_percentage }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ total_videos }}</div>
+                        <div class="stat-label">Vídeos enviados</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ total_videos * 10 }}</div>
+                        <div class="stat-label">Total de visualizações</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ "%.2f"|format(free_space_mb / 1024) }} GB</div>
+                        <div class="stat-label">Espaço livre restante</div>
+                    </div>
+                </div>
+
+                <div class="settings-card" style="margin-top: 40px;">
+                    <h3>Vídeos Populares</h3>
+                    {% if videos %}
+                    <div class="info-row">
+                        <span class="info-label">Mais recente</span>
+                        <span class="info-value">{{ videos[0].name }} (enviado hoje)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Último upload</span>
+                        <span class="info-value">{{ videos[-1].name }} (há {{ (videos|length) }} vídeos)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Média de tamanho</span>
+                        <span class="info-value">{{ "%.2f"|format(total_size_mb / total_videos if total_videos > 0 else 0) }} MB por vídeo</span>
+                    </div>
+                    {% else %}
+                    <div class="info-row">
+                        <span class="info-value">Nenhum vídeo enviado ainda.</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Configurações</h1>
+                    <p class="section-subtitle">Gerencie sua conta e preferências</p>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <h3>Informações da Conta</h3>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">{{ email }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Usuário</span>
+                            <span class="info-value">{{ username }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Plano atual</span>
+                            <span class="plan-badge">Free</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Conta criada em</span>
+                            <span class="info-value">{{ created_at.strftime('%d de %B, %Y') if created_at else 'Data desconhecida' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Editar Perfil</h3>
+                        <div style="display:flex; justify-content:center; margin-bottom:18px;">
+                            <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;">
+                                {% if avatar_url %}
+                                    <img src="{{ avatar_url }}" style="width:100%;height:100%;object-fit:cover;" alt="Avatar">
+                                {% else %}
+                                    {{ username[:2]|upper }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nome de usuário</label>
+                            <input type="text" class="form-input" value="{{ username }}" id="usernameInput">
+                        </div>
+                        <div class="form-group" style="margin-top:12px;">
+                            <label class="form-label">Foto de perfil</label>
+                            <input type="file" class="form-input" id="avatarInput" accept="image/*">
+                        </div>
+                        <div style="margin-top: 20px; display:flex; gap:12px; flex-wrap:wrap;">
+                            <button class="btn btn-primary" onclick="saveUsername()">Salvar alterações</button>
+                            <button class="btn btn-outline" onclick="openPasswordModal()">Alterar senha</button>
+                            <button class="btn btn-secondary" onclick="uploadAvatar()">Atualizar foto</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Preferências</h3>
+                        <div class="info-row">
+                            <span class="info-label">Notificações por email</span>
+                            <label style="position: relative; display: inline-block; width: 48px; height: 24px;">
+                                <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--primary); border-radius: 24px; transition: 0.4s;"></span>
+                            </label>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Expiração padrão</span>
+                            <span class="info-value">7 dias</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <svg viewBox="0 0 100 100" class="logo-svg">
+                                <defs>
+                                    <linearGradient id="voidGradientFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#ff00ff" />
+                                        <stop offset="100%" stop-color="#6b21a8" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="url(#voidGradientFooter)" stroke-width="2" />
+                                <circle cx="50" cy="50" r="35" fill="none" stroke="url(#voidGradientFooter)" stroke-width="1.5" opacity="0.6" />
+                                <circle cx="50" cy="50" r="25" fill="url(#voidGradientFooter)" />
+                                <text x="50" y="58" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Orbitron">V</text>
+                            </svg>
+                        </div>
+                        <span class="logo-text">VoidGate</span>
+                    </div>
+                    <p class="footer-desc">Transformando a forma como você compartilha vídeos na web. Rápido, seguro e sem complicação.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 3.6 5.4 6.5 9 7.5-1-4.2 3-7.5 7-5 1-.5 2-1 3-1.5-.5 1.5-1.5 2.5-3 3 1 0 2-.5 3-1-.5 1-1.5 2-2.5 2.5z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Discord">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Produto</h4>
+                    <ul>
+                        <li><a href="#">Recursos</a></li>
+                        <li><a href="#">Preços</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Documentação</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Sobre nós</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacidade</a></li>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Cookies</a></li>
+                        <li><a href="#">Licenças</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2024 VoidGate. Todos os direitos reservados. Feito com 💜 para a comunidade.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmar Exclusão</h2>
+            </div>
+            <p style="color: var(--gray); margin-bottom: 20px;">Tem certeza que deseja excluir este vídeo? Esta ação não pode ser desfeita.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Alterar Senha</h2>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Senha atual</label>
+                <input type="password" class="form-input" id="currentPassword">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nova senha</label>
+                <input type="password" class="form-input" id="newPassword">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirmar nova senha</label>
+                <input type="password" class="form-input" id="confirmPassword">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closePasswordModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="changePassword()">Alterar Senha</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmar Logout</h2>
+            </div>
+            <p style="color: var(--gray); margin-bottom: 20px;">Tem certeza que deseja sair da sua conta?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeLogoutModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmLogout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMessage">Operação realizada com sucesso!</span>
+    </div>
+
+    <script>
+    let selectedFile = null;
+    let videoToDelete = null;
+
+    // --- Navegação entre seções ---
+    function showSection(sectionId) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        
+        document.getElementById(sectionId)?.classList.add('active');
+        document.querySelector(`[data-section="${sectionId}"]`)?.classList.add('active');
+    }
+
+    // --- Toggle sidebar mobile ---
+    function toggleSidebar() {
+        document.getElementById('sidebar')?.classList.toggle('active');
+    }
+
+    // --- Busca de vídeos ---
+    function searchVideos(query) {
+        const cards = document.querySelectorAll('.video-card');
+        const searchTerm = query.toLowerCase();
+        
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            card.style.display = name.includes(searchTerm) ? 'block' : 'none';
+        });
+    }
+
+    // --- Upload de arquivo (input ou drag and drop) ---
+    function handleFileSelect(event) {
+        selectedFile = event.target.files[0];
+        if (selectedFile) {
+            const uploadBox = document.getElementById('uploadBox');
+            uploadBox.innerHTML = `
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                </svg>
+                <div class="upload-text">${selectedFile.name}</div>
+                <div class="upload-hint">${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</div>
+            `;
+        }
+    }
+
+    // --- Drag & Drop ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const uploadBox = document.getElementById('uploadBox');
+        if (uploadBox) {
+            uploadBox.addEventListener('dragover', e => {
+                e.preventDefault();
+                uploadBox.classList.add('dragover');
+            });
+            
+            uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('dragover'));
+            
+            uploadBox.addEventListener('drop', e => {
+                e.preventDefault();
+                uploadBox.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    selectedFile = files[0];
+                    document.getElementById('fileInput').files = files;
+                    handleFileSelect({ target: { files: files } });
+                }
+            });
+        }
+    });
+
+    // --- Upload de vídeo ---
+    function uploadVideo() {
+        if (!selectedFile) return showToast('Por favor, selecione um vídeo primeiro', 'error');
+
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        progressBar.style.display = 'block';
+        progressFill.style.width = '0%';
+
+        const formData = new FormData();
+        formData.append('video', selectedFile, selectedFile.name);
+
+        // Add custom name if provided
+        const customName = document.getElementById('videoName').value.trim();
+        if (customName) {
+            formData.append('videoName', customName);
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/panel/upload', true);
+
+        xhr.upload.addEventListener('progress', e => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressFill.style.width = percent + '%';
+            }
+        });
+
+        xhr.onload = () => {
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+
+            if (xhr.status === 200 || xhr.status === 302) {
+                showToast('Upload concluído com sucesso!', 'success');
+                setTimeout(() => window.location.reload(), 1200);
+            } else {
+                showToast('Erro no upload: ' + xhr.responseText, 'error');
+            }
+        };
+
+        xhr.onerror = () => {
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+            showToast('Erro no upload.', 'error');
+        };
+
+        xhr.send(formData);
+    }
+
+    // --- Copiar link ---
+    function copyLink(button) {
+        const videoName = button.getAttribute('data-video-name');
+        const username = button.getAttribute('data-username');
+        const url = `${window.location.origin}/api/v/${username}/${videoName}.mp4`;
+        navigator.clipboard.writeText(url);
+        showToast('Link copiado para a área de transferência!');
+    }
+
+    function copyResultLink() {
+        const link = document.getElementById('resultLink').textContent;
+        navigator.clipboard.writeText(link);
+        showToast('Link copiado para a área de transferência!');
+    }
+
+    // --- Abrir vídeo ---
+    function openVideo(button) {
+        const videoName = button.getAttribute('data-video-name');
+        const username = button.getAttribute('data-username');
+        const url = `${window.location.origin}/api/v/${username}/${videoName}.mp4`;
+        window.open(url, '_blank');
+    }
+
+    // --- Excluir vdeo ---
+    function deleteVideo(videoId) {
+        videoToDelete = videoId;
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function confirmDelete() {
+        if (videoToDelete) {
+            fetch(`/panel/delete_video/${videoToDelete}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    showToast('Vídeo excluído com sucesso!', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('Erro ao excluir vídeo', 'error');
+                }
+            })
+            .catch(() => showToast('Erro de rede', 'error'));
+        }
+        closeModal();
+    }
+
+    // --- Configurações ---
+    function saveUsername() {
+        const username = document.getElementById('usernameInput').value.trim();
+        if (!username) return showToast('Nome de usuário não pode ser vazio', 'error');
+
+        fetch('/panel/update_username', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Nome de usuário atualizado com sucesso!', 'success');
+                document.querySelector('.settings-card .info-row .info-value').textContent = username;
+                setTimeout(() => window.location.reload(), 800);
+            } else {
+                showToast(data.error || 'Erro ao atualizar nome de usuário', 'error');
+            }
+        })
+        .catch(() => showToast('Erro de rede', 'error'));
+    }
+
+    function openPasswordModal() {
+        document.getElementById('passwordModal')?.classList.add('active');
+    }
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal')?.classList.remove('active');
+    }
+
+    function changePassword() {
+        const current = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+
+        if (!current || !newPass || !confirm)
+            return showToast('Por favor, preencha todos os campos', 'error');
+
+        if (newPass !== confirm)
+            return showToast('As senhas não coincidem', 'error');
+
+        fetch('/panel/update_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ current, new: newPass })
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast('Senha alterada com sucesso!', 'success');
+                closePasswordModal();
+                setTimeout(() => window.location.reload(), 800);
+            } else {
+                showToast(d.error || 'Erro ao alterar senha', 'error');
+            }
+        })
+        .catch(() => showToast('Erro de rede', 'error'));
+
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }
+
+    function uploadAvatar() {
+        const input = document.getElementById('avatarInput');
+        if (!input.files || !input.files[0]) return showToast('Selecione uma imagem primeiro', 'error');
+
+        const formData = new FormData();
+        formData.append('avatar', input.files[0]);
+
+        fetch('/panel/update_avatar', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast('Foto atualizada com sucesso!', 'success');
+                setTimeout(() => window.location.reload(), 800);
+            } else {
+                showToast(d.error || 'Erro ao atualizar foto', 'error');
+            }
+        })
+        .catch(() => showToast('Erro de rede', 'error'));
+    }
+
+    // --- Toast notification ---
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        if (!toast || !toastMessage) return;
+
+        toastMessage.textContent = message;
+        toast.className = `toast ${type} active`;
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // --- Logout ---
+    function logout() {
+        document.getElementById('logoutModal').classList.add('active');
+    }
+
+    function confirmLogout() {
+        showToast('Desconectando...', 'success');
+        setTimeout(() => window.location.href = '/auth/logout', 1000);
+        closeLogoutModal();
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal')?.classList.remove('active');
+    }
+
+    // --- Inicialização ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Ativa a navegação
+        document.querySelectorAll('.menu-item[data-section]').forEach(item => {
+            item.addEventListener('click', () => {
+                const sectionId = item.getAttribute('data-section');
+                showSection(sectionId);
+            });
+        });
+
+        // Botão do menu mobile
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        if (mobileBtn) mobileBtn.addEventListener('click', toggleSidebar);
+
+        // Fecha modal ao clicar fora
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', e => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        });
+
+        // Animação fadeOut
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.9); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Mensagens Flask
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    showToast("{{ msg }}", "{{ category }}");
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+            // --- Update expiration badges ---
+            function updateExpirationBadges() {
+                const videoCards = document.querySelectorAll('.video-card[data-expiration]');
+
+                videoCards.forEach(card => {
+                    const expirationDateStr = card.getAttribute('data-expiration');
+                    if (!expirationDateStr) return;
+
+                    try {
+                        const expirationDate = new Date(expirationDateStr);
+                        const now = new Date();
+                        const remainingMs = expirationDate - now;
+
+                        if (remainingMs <= 0) {
+                            // Video has expired
+                            const badge = card.querySelector('.expire-badge');
+                            if (badge) {
+                                badge.innerHTML = '⏰ Expirado';
+                                badge.style.background = 'rgba(248, 113, 113, 0.15)';
+                                badge.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+                                badge.style.color = '#f87171';
+                            }
+                        } else {
+                            // Calculate remaining time
+                            const remainingSeconds = Math.floor(remainingMs / 1000);
+                            const remainingMinutes = Math.floor(remainingSeconds / 60);
+                            const remainingHours = Math.floor(remainingMinutes / 60);
+                            const remainingDays = Math.floor(remainingHours / 24);
+
+                            let timeText;
+                            if (remainingDays > 0) {
+                                timeText = `Expira em ${remainingDays} dia${remainingDays > 1 ? 's' : ''}`;
+                            } else if (remainingHours > 0) {
+                                timeText = `Expira em ${remainingHours}h ${remainingMinutes % 60}m`;
+                            } else {
+                                timeText = `Expira em ${remainingMinutes} minuto${remainingMinutes > 1 ? 's' : ''}`;
+                            }
+
+                            const badge = card.querySelector('.expire-badge');
+                            if (badge) {
+                                badge.innerHTML = `⏰ ${timeText}`;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error updating expiration badge:', e);
+                    }
+                });
+            }
+
+            // Update expiration badges immediately and every minute
+            updateExpirationBadges();
+            setInterval(updateExpirationBadges, 60000); // Update every minute
+        });
+
+    </script>
+
+</body>
+</html>
